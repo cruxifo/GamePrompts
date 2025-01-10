@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seeded List Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+
+        #navigation {
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Seeded List Viewer</h1>
+
+    <!-- Input for seed -->
+    <label for="seedInput">Enter Seed:</label>
+    <input type="number" id="seedInput" placeholder="Enter a seed">
+    <button id="showExamples">Show Examples</button>
+
+    <!-- Display for examples -->
+    <div id="examples" class="hidden">
+        <h2>Examples:</h2>
+        <ul id="exampleList"></ul>
+        <button id="begin">Begin</button>
+    </div>
+
+    <!-- Viewer for the shuffled list -->
+    <div id="viewer" class="hidden">
+        <h2>Seed: <span id="currentSeed"></span></h2>
+        <h3 id="currentItem"></h3>
+        <div id="navigation">
+            <button id="prev">&lt; Previous</button>
+            <button id="next">Next &gt;</button>
+        </div>
+    </div>
+
+    <script>
+        // Your list of strings
+        const stringList = ["Apple", "Banana", "Cherry", "Date", "Elderberry", "Fig", "Grape"];
+
+        let shuffledList = [];
+        let currentIndex = 0;
+
+        // Utility function to seed a random number generator
+        function seededRandom(seed) {
+            let x = Math.sin(seed++) * 10000;
+            return x - Math.floor(x);
+        }
+
+        // Function to shuffle an array with a seed
+        function shuffleArray(array, seed) {
+            const random = () => seededRandom(seed++);
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Show examples when "Show Examples" is clicked
+        document.getElementById('showExamples').addEventListener('click', () => {
+            const seedInput = document.getElementById('seedInput').value;
+            if (seedInput === "") {
+                alert("Please enter a seed.");
+                return;
+            }
+
+            const seed = parseInt(seedInput, 10);
+            shuffledList = [...stringList];
+            shuffleArray(shuffledList, seed);
+
+            const exampleList = document.getElementById('exampleList');
+            exampleList.innerHTML = '';
+            for (let i = 0; i < Math.min(3, shuffledList.length); i++) {
+                const li = document.createElement('li');
+                li.textContent = shuffledList[i];
+                exampleList.appendChild(li);
+            }
+
+            document.getElementById('examples').classList.remove('hidden');
+        });
+
+        // Start the viewer when "Begin" is clicked
+        document.getElementById('begin').addEventListener('click', () => {
+            const seedInput = document.getElementById('seedInput').value;
+            const seed = parseInt(seedInput, 10);
+
+            document.getElementById('currentSeed').textContent = seed;
+            currentIndex = 0;
+            updateCurrentItem();
+
+            document.getElementById('examples').classList.add('hidden');
+            document.getElementById('viewer').classList.remove('hidden');
+        });
+
+        // Update the current item display
+        function updateCurrentItem() {
+            document.getElementById('currentItem').textContent = shuffledList[currentIndex];
+        }
+
+        // Navigate to the previous item
+        document.getElementById('prev').addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCurrentItem();
+            }
+        });
+
+        // Navigate to the next item
+        document.getElementById('next').addEventListener('click', () => {
+            if (currentIndex < shuffledList.length - 1) {
+                currentIndex++;
+                updateCurrentItem();
+            }
+        });
+    </script>
+</body>
+
+</html>
