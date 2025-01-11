@@ -40,6 +40,17 @@
             color: #004080;
             /* Darker blue text for contrast */
         }
+
+        #exampleList {
+            list-style-type: none;
+            /* Remove bullet points */
+            padding: 0;
+            /* Remove left padding */
+            margin: 0;
+            /* Remove margin to align with the container */
+            text-align: center;
+            /* Center the list items */
+        }
     </style>
 </head>
 
@@ -189,7 +200,6 @@
             for (let i = 0; i < Math.min(3, shuffledList.length); i++) {
                 const li = document.createElement('li');
                 li.textContent = shuffledList[i];
-                li.style = "list-style-type:none;"
                 exampleList.appendChild(li);
             }
 
