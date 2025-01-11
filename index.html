@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seeded List Viewer</title>
+    <title>Group Doublethink</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,41 +19,142 @@
         .hidden {
             display: none;
         }
+
+        .pastel-blue-box {
+            background-color: #b3d9ff;
+            /* Light pastel blue color */
+            border-radius: 15px;
+            /* Rounded edges */
+            padding: 20px;
+            /* Good padding */
+            max-width: 500px;
+            /* Optional: control the box width */
+            margin: 20px auto;
+            /* Center the box horizontally */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Soft shadow for depth */
+            font-family: Arial, sans-serif;
+            /* Clean font styling */
+            text-align: center;
+            /* Center the text inside the box */
+            color: #004080;
+            /* Darker blue text for contrast */
+        }
     </style>
 </head>
 
 <body>
-    <h1>Seeded List Viewer</h1>
+    <h1>Group Doublethink</h1>
 
     <!-- Input for seed -->
-    <label for="seedInput">Enter Seed:</label>
-    <input type="number" id="seedInput" placeholder="Enter a seed">
-    <button id="showExamples">Show Examples</button>
+    <div id="seedbit">
+        <label for="seedInput">Enter Seed:</label>
+        <input type="number" id="seedInput" placeholder="Enter a seed">
+    </div>
 
     <!-- Display for examples -->
     <div id="examples" class="hidden">
         <h2>Examples:</h2>
         <ul id="exampleList"></ul>
-        <button id="begin">Begin</button>
     </div>
+    <button id="showExamples">Show Examples</button>
+    <button id="begin">Begin</button>
+    <div id="error" style="color: red;"></div>
 
     <!-- Viewer for the shuffled list -->
     <div id="viewer" class="hidden">
-        <h2>Seed: <span id="currentSeed"></span></h2>
-        <h3 id="currentItem"></h3>
-        <div id="navigation">
-            <button id="prev">&lt; Previous</button>
-            <button id="next">Next &gt;</button>
+        <h5>Seed: <span id="currentSeed"></span></h5>
+        <div class="pastel-blue-box">
+            <h3>Prompt # <span id="curIndex"></span></h3>
+            <h2 id="currentItem"></h2>
+            <div id="navigation">
+                <button id="prev">&lt; Previous</button>
+                <button id="next">Next &gt;</button>
+            </div>
         </div>
     </div>
 
     <script>
         // Your list of strings
-        const stringList = ["Apple", "Banana", "Cherry", "Date", "Elderberry", "Fig", "Grape"];
+        const stringList = [
+            "Biggest ick",
+            "Most attractive feature",
+            "Best sport",
+            "Worst sport",
+            "Best place to go on holiday",
+            "Worst place to go on holiday",
+            "Best food",
+            "Worst food",
+            "Cutest animal",
+            "Biggest thing you can think of",
+            "Smallest thing you can think of",
+            "Scariest monster",
+            "Sexiest monster",
+            "Most dangerous animal",
+            "Most common phobia",
+            "First purchase after a lottery win",
+            "Classic children's drawing",
+            "Most comforting thing",
+            "Famous person beginning with T",
+            "Household object beginning with L",
+            "Animal beginning with L",
+            "Plant beginning with C",
+            "Greatest Brit",
+            "Most villainous Brit",
+            "Best genre of music",
+            "Worst genre of music",
+            "Idiom",
+            "Favourite superhero",
+            "Favourite supervillain",
+            "Farm animal",
+            "Country",
+            "Best Fruit",
+            "Best Vegetable",
+            "Best vehicle",
+            "Best form of transport",
+            "Best room in the house",
+            "Where does the magic happen",
+            "Smelliest body part",
+            "007 film",
+            "Comedy film",
+            "Rom com",
+            "Taylor swift song",
+            "ABBA song",
+            "Magical spell",
+            "Dance move",
+            "Why did the chicken cross the road",
+            "Board game",
+            "Computer game",
+            "Historical event",
+            "Favourite meme",
+            "Crisp flavour",
+            "A sea creature",
+            "Tv show",
+            "Best pet",
+            "Sticky food",
+            "Dry food",
+            "Wet food",
+            "Animal you wouldn't want as a pet",
+            "Worst place to be touched",
+            "Classical element",
+            "Scientific element",
+            "Dice roll result",
+            "A famous magician",
+            "Something a cowboy would own",
+            "Something a witch would own",
+            "A famous musician",
+            "The biggest hat",
+            "Sci-fi movie",
+            "Classic fiction",
+            "Greek myth",
+            "A planet other than earth",
+            "A star other than the sun",
+        ]
 
         let shuffledList = [];
         let currentIndex = 0;
-
+        let showingExamples = false;
+        let begun = false;
         // Utility function to seed a random number generator
         function seededRandom(seed) {
             let x = Math.sin(seed++) * 10000;
@@ -68,13 +169,15 @@
                 [array[i], array[j]] = [array[j], array[i]];
             }
         }
-
-        // Show examples when "Show Examples" is clicked
-        document.getElementById('showExamples').addEventListener('click', () => {
+        function showExamplesClicked() {
             const seedInput = document.getElementById('seedInput').value;
             if (seedInput === "") {
-                alert("Please enter a seed.");
+                document.getElementById('error').textContent = "enter a seed";
                 return;
+            }
+            else {
+                document.getElementById('error').textContent = "";
+
             }
 
             const seed = parseInt(seedInput, 10);
@@ -86,33 +189,63 @@
             for (let i = 0; i < Math.min(3, shuffledList.length); i++) {
                 const li = document.createElement('li');
                 li.textContent = shuffledList[i];
+                li.style = "list-style-type:none;"
                 exampleList.appendChild(li);
             }
 
-            document.getElementById('examples').classList.remove('hidden');
+            showingExamples = !showingExamples;
+
+            if (showingExamples) {
+                document.getElementById('showExamples').textContent = "Hide examples"
+                document.getElementById('examples').classList.remove('hidden');
+            }
+            else {
+                document.getElementById('showExamples').textContent = "Show examples"
+                document.getElementById('examples').classList.add('hidden');
+            }
+        }
+
+        // Show examples when "Show Examples" is clicked
+        document.getElementById('showExamples').addEventListener('click', () => {
+            showExamplesClicked();
         });
 
         // Start the viewer when "Begin" is clicked
         document.getElementById('begin').addEventListener('click', () => {
+            showExamplesClicked();
             const seedInput = document.getElementById('seedInput').value;
+            if (seedInput === "") {
+                document.getElementById('error').textContent = "enter a seed";
+                return;
+            }
+            begun = true;
+            if (begun) {
+                document.getElementById('begin').classList.add('hidden')
+                document.getElementById('seedbit').classList.add('hidden')
+            }
+            else {
+                document.getElementById('error').textContent = "";
+
+            }
             const seed = parseInt(seedInput, 10);
 
             document.getElementById('currentSeed').textContent = seed;
-            currentIndex = 0;
+            currentIndex = 3;
             updateCurrentItem();
 
-            document.getElementById('examples').classList.add('hidden');
             document.getElementById('viewer').classList.remove('hidden');
         });
 
         // Update the current item display
         function updateCurrentItem() {
+            document.getElementById('curIndex').textContent = currentIndex - 2;
+
             document.getElementById('currentItem').textContent = shuffledList[currentIndex];
         }
 
         // Navigate to the previous item
         document.getElementById('prev').addEventListener('click', () => {
-            if (currentIndex > 0) {
+            if (currentIndex >= 4) {
                 currentIndex--;
                 updateCurrentItem();
             }
